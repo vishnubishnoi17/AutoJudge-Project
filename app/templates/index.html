@@ -1,0 +1,191 @@
+<! DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoJudge - Problem Difficulty Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 AutoJudge</h1>
+            <p class="subtitle">Predict Programming Problem Difficulty</p>
+        </header>
+
+        <div class="content">
+            <form id="predictionForm">
+                <div class="form-group">
+                    <label for="title">Problem Title (Optional)</label>
+                    <input type="text" id="title" name="title" placeholder="e. g., Two Sum">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Problem Description <span class="required">*</span></label>
+                    <textarea id="description" name="description" rows="6" placeholder="Enter the problem description here..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="input_description">Input Description (Optional)</label>
+                    <textarea id="input_description" name="input_description" rows="3" placeholder="Describe the input format... "></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="output_description">Output Description (Optional)</label>
+                    <textarea id="output_description" name="output_description" rows="3" placeholder="Describe the expected output..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary" id="predictBtn">
+                        <span class="btn-text">Predict Difficulty</span>
+                        <span class="btn-loader" style="display: none;">⏳ Predicting...</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="clearBtn">Clear</button>
+                </div>
+            </form>
+
+            <div id="results" class="results" style="display: none;">
+                <h2>📊 Prediction Results</h2>
+                
+                <div class="result-card">
+                    <div class="result-label">Predicted Difficulty Class</div>
+                    <div class="result-value" id="predictedClass">-</div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-label">Predicted Difficulty Score</div>
+                    <div class="result-value" id="predictedScore">-</div>
+                </div>
+
+                <div id="probabilitiesSection" style="display: none;">
+                    <h3>Class Probabilities</h3>
+                    <div class="probabilities">
+                        <div class="probability-bar">
+                            <div class="prob-label">Easy</div>
+                            <div class="prob-bar-container">
+                                <div class="prob-bar prob-easy" id="probEasy"></div>
+                            </div>
+                            <div class="prob-value" id="probEasyValue">0%</div>
+                        </div>
+                        <div class="probability-bar">
+                            <div class="prob-label">Medium</div>
+                            <div class="prob-bar-container">
+                                <div class="prob-bar prob-medium" id="probMedium"></div>
+                            </div>
+                            <div class="prob-value" id="probMediumValue">0%</div>
+                        </div>
+                        <div class="probability-bar">
+                            <div class="prob-label">Hard</div>
+                            <div class="prob-bar-container">
+                                <div class="prob-bar prob-hard" id="probHard"></div>
+                            </div>
+                            <div class="prob-value" id="probHardValue">0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="error" class="error" style="display: none;"></div>
+        </div>
+
+        <footer>
+            <p>Built with ❤️ for automatic programming problem difficulty assessment</p>
+        </footer>
+    </div>
+
+    <script>
+        const form = document.getElementById('predictionForm');
+        const resultsDiv = document.getElementById('results');
+        const errorDiv = document.getElementById('error');
+        const predictBtn = document. getElementById('predictBtn');
+        const clearBtn = document.getElementById('clearBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Hide previous results/errors
+            resultsDiv.style. display = 'none';
+            errorDiv.style.display = 'none';
+            
+            // Show loading state
+            document.querySelector('.btn-text').style.display = 'none';
+            document.querySelector('.btn-loader').style.display = 'inline';
+            predictBtn.disabled = true;
+
+            // Get form data
+            const formData = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                input_description: document. getElementById('input_description').value,
+                output_description: document. getElementById('output_description').value
+            };
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                // Display results
+                displayResults(data);
+            } catch (error) {
+                errorDiv.textContent = error. message;
+                errorDiv.style.display = 'block';
+            } finally {
+                // Reset button state
+                document.querySelector('.btn-text').style.display = 'inline';
+                document.querySelector('.btn-loader').style.display = 'none';
+                predictBtn. disabled = false;
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            form.reset();
+            resultsDiv.style.display = 'none';
+            errorDiv.style.display = 'none';
+        });
+
+        function displayResults(data) {
+            // Set class and score
+            const classElem = document.getElementById('predictedClass');
+            classElem.textContent = data. predicted_class;
+            classElem.className = 'result-value class-' + data.predicted_class. toLowerCase();
+
+            document.getElementById('predictedScore').textContent = data.predicted_score;
+
+            // Display probabilities if available
+            if (data.probabilities) {
+                document.getElementById('probabilitiesSection').style.display = 'block';
+                
+                const probEasy = data.probabilities.Easy * 100;
+                const probMedium = data.probabilities. Medium * 100;
+                const probHard = data.probabilities.Hard * 100;
+
+                document.getElementById('probEasy').style.width = probEasy + '%';
+                document.getElementById('probEasyValue').textContent = probEasy. toFixed(1) + '%';
+
+                document.getElementById('probMedium').style.width = probMedium + '%';
+                document.getElementById('probMediumValue').textContent = probMedium.toFixed(1) + '%';
+
+                document.getElementById('probHard').style.width = probHard + '%';
+                document.getElementById('probHardValue').textContent = probHard.toFixed(1) + '%';
+            } else {
+                document.getElementById('probabilitiesSection').style.display = 'none';
+            }
+
+            // Show results
+            resultsDiv.style.display = 'block';
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
