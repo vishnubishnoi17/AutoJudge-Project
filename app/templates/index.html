@@ -1,191 +1,141 @@
-<! DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoJudge - Problem Difficulty Predictor</title>
+    <title>AutoJudge - Difficulty Predictor</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🎯 AutoJudge</h1>
-            <p class="subtitle">Predict Programming Problem Difficulty</p>
-        </header>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-gavel me-2"></i>AutoJudge
+            </a>
+            <button class="btn btn-outline-light btn-sm ms-auto" id="darkModeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
 
-        <div class="content">
-            <form id="predictionForm">
-                <div class="form-group">
-                    <label for="title">Problem Title (Optional)</label>
-                    <input type="text" id="title" name="title" placeholder="e. g., Two Sum">
-                </div>
-
-                <div class="form-group">
-                    <label for="description">Problem Description <span class="required">*</span></label>
-                    <textarea id="description" name="description" rows="6" placeholder="Enter the problem description here..." required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="input_description">Input Description (Optional)</label>
-                    <textarea id="input_description" name="input_description" rows="3" placeholder="Describe the input format... "></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="output_description">Output Description (Optional)</label>
-                    <textarea id="output_description" name="output_description" rows="3" placeholder="Describe the expected output..."></textarea>
-                </div>
-
-                <div class="button-group">
-                    <button type="submit" class="btn btn-primary" id="predictBtn">
-                        <span class="btn-text">Predict Difficulty</span>
-                        <span class="btn-loader" style="display: none;">⏳ Predicting...</span>
-                    </button>
-                    <button type="button" class="btn btn-secondary" id="clearBtn">Clear</button>
-                </div>
-            </form>
-
-            <div id="results" class="results" style="display: none;">
-                <h2>📊 Prediction Results</h2>
+    <div class="container main-content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
                 
-                <div class="result-card">
-                    <div class="result-label">Predicted Difficulty Class</div>
-                    <div class="result-value" id="predictedClass">-</div>
+                <!-- Input Card -->
+                <div class="card shadow-lg border-0 mb-4 fade-in">
+                    <div class="card-body p-4">
+                        <h2 class="h4 mb-4 text-primary border-bottom pb-2">Problem Details</h2>
+                        
+                        <form id="predictionForm">
+                            <div class="mb-3">
+                                <label for="title" class="form-label fw-semibold">Problem Title <span class="text-muted fw-light">(Optional)</span></label>
+                                <input type="text" class="form-control" id="title" name="title" placeholder="e.g., Two Sum">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label fw-semibold">Description <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="description" name="description" rows="5" placeholder="Enter the full problem description..." required></textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="input_description" class="form-label fw-semibold">Input Format</label>
+                                    <textarea class="form-control" id="input_description" name="input_description" rows="3" placeholder="e.g., An array of integers..."></textarea>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="output_description" class="form-label fw-semibold">Output Format</label>
+                                    <textarea class="form-control" id="output_description" name="output_description" rows="3" placeholder="e.g., Return indices of the two numbers..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                                <button type="button" class="btn btn-light me-md-2" id="clearBtn">Clear</button>
+                                <button type="submit" class="btn btn-primary px-4" id="predictBtn">
+                                    <span class="btn-text"><i class="fas fa-magic me-2"></i>Predict Difficulty</span>
+                                    <span class="btn-loader spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                                    <span class="btn-loader-text ms-2" style="display: none;">Analyzing...</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
-                <div class="result-card">
-                    <div class="result-label">Predicted Difficulty Score</div>
-                    <div class="result-value" id="predictedScore">-</div>
+                <!-- Error Alert -->
+                <div id="error" class="alert alert-danger shadow-sm border-0" style="display: none;">
+                    <i class="fas fa-exclamation-circle me-2"></i> <span id="errorMessage"></span>
                 </div>
 
-                <div id="probabilitiesSection" style="display: none;">
-                    <h3>Class Probabilities</h3>
-                    <div class="probabilities">
-                        <div class="probability-bar">
-                            <div class="prob-label">Easy</div>
-                            <div class="prob-bar-container">
-                                <div class="prob-bar prob-easy" id="probEasy"></div>
+                <!-- Results Section -->
+                <div id="results" class="card shadow-lg border-0 result-card mb-5" style="display: none;">
+                    <div class="card-header bg-white border-0 pt-4 pb-0">
+                        <h3 class="h5 text-center text-muted mb-0">Analysis Result</h3>
+                    </div>
+                    <div class="card-body p-4 text-center">
+                        <div class="row align-items-center justify-content-center mb-4">
+                            <div class="col-md-6 border-end-md">
+                                <div class="text-muted small text-uppercase ls-1">Difficulty Class</div>
+                                <div class="display-6 fw-bold" id="predictedClass">-</div>
                             </div>
-                            <div class="prob-value" id="probEasyValue">0%</div>
+                            <div class="col-md-6 mt-3 mt-md-0">
+                                <div class="text-muted small text-uppercase ls-1">Complexity Score</div>
+                                <div class="display-6 fw-bold text-dark" id="predictedScore">-</div>
+                            </div>
                         </div>
-                        <div class="probability-bar">
-                            <div class="prob-label">Medium</div>
-                            <div class="prob-bar-container">
-                                <div class="prob-bar prob-medium" id="probMedium"></div>
+
+                        <div id="probabilitiesSection" class="mt-4 text-start bg-light p-3 rounded-3" style="display: none;">
+                            <h6 class="text-muted mb-3 small text-uppercase">Confidence Levels</h6>
+                            
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between small mb-1">
+                                    <span>Easy</span>
+                                    <span id="probEasyValue">0%</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-success" id="probEasy" role="progressbar" style="width: 0%"></div>
+                                </div>
                             </div>
-                            <div class="prob-value" id="probMediumValue">0%</div>
-                        </div>
-                        <div class="probability-bar">
-                            <div class="prob-label">Hard</div>
-                            <div class="prob-bar-container">
-                                <div class="prob-bar prob-hard" id="probHard"></div>
+
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between small mb-1">
+                                    <span>Medium</span>
+                                    <span id="probMediumValue">0%</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-warning" id="probMedium" role="progressbar" style="width: 0%"></div>
+                                </div>
                             </div>
-                            <div class="prob-value" id="probHardValue">0%</div>
+
+                            <div class="mb-0">
+                                <div class="d-flex justify-content-between small mb-1">
+                                    <span>Hard</span>
+                                    <span id="probHardValue">0%</span>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-danger" id="probHard" role="progressbar" style="width: 0%"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
-
-            <div id="error" class="error" style="display: none;"></div>
         </div>
-
-        <footer>
-            <p>Built with ❤️ for automatic programming problem difficulty assessment</p>
-        </footer>
     </div>
 
-    <script>
-        const form = document.getElementById('predictionForm');
-        const resultsDiv = document.getElementById('results');
-        const errorDiv = document.getElementById('error');
-        const predictBtn = document. getElementById('predictBtn');
-        const clearBtn = document.getElementById('clearBtn');
+    <footer class="text-center py-4 text-muted small">
+        <p>&copy; 2024 AutoJudge Project</p>
+    </footer>
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // Hide previous results/errors
-            resultsDiv.style. display = 'none';
-            errorDiv.style.display = 'none';
-            
-            // Show loading state
-            document.querySelector('.btn-text').style.display = 'none';
-            document.querySelector('.btn-loader').style.display = 'inline';
-            predictBtn.disabled = true;
-
-            // Get form data
-            const formData = {
-                title: document.getElementById('title').value,
-                description: document.getElementById('description').value,
-                input_description: document. getElementById('input_description').value,
-                output_description: document. getElementById('output_description').value
-            };
-
-            try {
-                const response = await fetch('/predict', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                const data = await response.json();
-
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
-                // Display results
-                displayResults(data);
-            } catch (error) {
-                errorDiv.textContent = error. message;
-                errorDiv.style.display = 'block';
-            } finally {
-                // Reset button state
-                document.querySelector('.btn-text').style.display = 'inline';
-                document.querySelector('.btn-loader').style.display = 'none';
-                predictBtn. disabled = false;
-            }
-        });
-
-        clearBtn.addEventListener('click', () => {
-            form.reset();
-            resultsDiv.style.display = 'none';
-            errorDiv.style.display = 'none';
-        });
-
-        function displayResults(data) {
-            // Set class and score
-            const classElem = document.getElementById('predictedClass');
-            classElem.textContent = data. predicted_class;
-            classElem.className = 'result-value class-' + data.predicted_class. toLowerCase();
-
-            document.getElementById('predictedScore').textContent = data.predicted_score;
-
-            // Display probabilities if available
-            if (data.probabilities) {
-                document.getElementById('probabilitiesSection').style.display = 'block';
-                
-                const probEasy = data.probabilities.Easy * 100;
-                const probMedium = data.probabilities. Medium * 100;
-                const probHard = data.probabilities.Hard * 100;
-
-                document.getElementById('probEasy').style.width = probEasy + '%';
-                document.getElementById('probEasyValue').textContent = probEasy. toFixed(1) + '%';
-
-                document.getElementById('probMedium').style.width = probMedium + '%';
-                document.getElementById('probMediumValue').textContent = probMedium.toFixed(1) + '%';
-
-                document.getElementById('probHard').style.width = probHard + '%';
-                document.getElementById('probHardValue').textContent = probHard.toFixed(1) + '%';
-            } else {
-                document.getElementById('probabilitiesSection').style.display = 'none';
-            }
-
-            // Show results
-            resultsDiv.style.display = 'block';
-            resultsDiv.scrollIntoView({ behavior: 'smooth' });
-        }
-    </script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Logic -->
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
 </html>
