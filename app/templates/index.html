@@ -1,141 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Meta tags for character encoding and responsive design -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoJudge - Difficulty Predictor</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="description" content="AutoJudge - AI-powered Programming Problem Difficulty Predictor">
+    <meta name="author" content="Vishnu Bishnoi">
+    
+    <!-- Page title -->
+    <title>AutoJudge - Problem Difficulty Predictor</title>
+    
+    <!-- Custom CSS stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Google Fonts - Modern sans-serif font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
-                <i class="fas fa-gavel me-2"></i>AutoJudge
-            </a>
-            <button class="btn btn-outline-light btn-sm ms-auto" id="darkModeToggle">
-                <i class="fas fa-moon"></i>
-            </button>
-        </div>
-    </nav>
-
-    <div class="container main-content">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                
-                <!-- Input Card -->
-                <div class="card shadow-lg border-0 mb-4 fade-in">
-                    <div class="card-body p-4">
-                        <h2 class="h4 mb-4 text-primary border-bottom pb-2">Problem Details</h2>
-                        
-                        <form id="predictionForm">
-                            <div class="mb-3">
-                                <label for="title" class="form-label fw-semibold">Problem Title <span class="text-muted fw-light">(Optional)</span></label>
-                                <input type="text" class="form-control" id="title" name="title" placeholder="e.g., Two Sum">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="description" class="form-label fw-semibold">Description <span class="text-danger">*</span></label>
-                                <textarea class="form-control" id="description" name="description" rows="5" placeholder="Enter the full problem description..." required></textarea>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="input_description" class="form-label fw-semibold">Input Format</label>
-                                    <textarea class="form-control" id="input_description" name="input_description" rows="3" placeholder="e.g., An array of integers..."></textarea>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="output_description" class="form-label fw-semibold">Output Format</label>
-                                    <textarea class="form-control" id="output_description" name="output_description" rows="3" placeholder="e.g., Return indices of the two numbers..."></textarea>
-                                </div>
-                            </div>
-
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                                <button type="button" class="btn btn-light me-md-2" id="clearBtn">Clear</button>
-                                <button type="submit" class="btn btn-primary px-4" id="predictBtn">
-                                    <span class="btn-text"><i class="fas fa-magic me-2"></i>Predict Difficulty</span>
-                                    <span class="btn-loader spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
-                                    <span class="btn-loader-text ms-2" style="display: none;">Analyzing...</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Error Alert -->
-                <div id="error" class="alert alert-danger shadow-sm border-0" style="display: none;">
-                    <i class="fas fa-exclamation-circle me-2"></i> <span id="errorMessage"></span>
-                </div>
-
-                <!-- Results Section -->
-                <div id="results" class="card shadow-lg border-0 result-card mb-5" style="display: none;">
-                    <div class="card-header bg-white border-0 pt-4 pb-0">
-                        <h3 class="h5 text-center text-muted mb-0">Analysis Result</h3>
-                    </div>
-                    <div class="card-body p-4 text-center">
-                        <div class="row align-items-center justify-content-center mb-4">
-                            <div class="col-md-6 border-end-md">
-                                <div class="text-muted small text-uppercase ls-1">Difficulty Class</div>
-                                <div class="display-6 fw-bold" id="predictedClass">-</div>
-                            </div>
-                            <div class="col-md-6 mt-3 mt-md-0">
-                                <div class="text-muted small text-uppercase ls-1">Complexity Score</div>
-                                <div class="display-6 fw-bold text-dark" id="predictedScore">-</div>
-                            </div>
-                        </div>
-
-                        <div id="probabilitiesSection" class="mt-4 text-start bg-light p-3 rounded-3" style="display: none;">
-                            <h6 class="text-muted mb-3 small text-uppercase">Confidence Levels</h6>
-                            
-                            <div class="mb-2">
-                                <div class="d-flex justify-content-between small mb-1">
-                                    <span>Easy</span>
-                                    <span id="probEasyValue">0%</span>
-                                </div>
-                                <div class="progress" style="height: 8px;">
-                                    <div class="progress-bar bg-success" id="probEasy" role="progressbar" style="width: 0%"></div>
-                                </div>
-                            </div>
-
-                            <div class="mb-2">
-                                <div class="d-flex justify-content-between small mb-1">
-                                    <span>Medium</span>
-                                    <span id="probMediumValue">0%</span>
-                                </div>
-                                <div class="progress" style="height: 8px;">
-                                    <div class="progress-bar bg-warning" id="probMedium" role="progressbar" style="width: 0%"></div>
-                                </div>
-                            </div>
-
-                            <div class="mb-0">
-                                <div class="d-flex justify-content-between small mb-1">
-                                    <span>Hard</span>
-                                    <span id="probHardValue">0%</span>
-                                </div>
-                                <div class="progress" style="height: 8px;">
-                                    <div class="progress-bar bg-danger" id="probHard" role="progressbar" style="width: 0%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+    <!-- Main container wrapper -->
+    <div class="container">
+        
+        <!-- Header section with branding -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+                <h1>AutoJudge</h1>
             </div>
-        </div>
+            <p class="tagline">AI-Powered Programming Problem Difficulty Predictor</p>
+            <div class="version-badge">v2.0 | Scale: 0-100</div>
+        </header>
+
+        <!-- Main content area -->
+        <main class="main-content">
+            
+            <!-- Introduction card -->
+            <div class="info-card">
+                <h2><i class="fas fa-info-circle"></i> How it works</h2>
+                <p>
+                    Enter your programming problem details below.  Our advanced machine learning models 
+                    (including <strong>LightGBM</strong> and <strong>XGBoost</strong>) will analyze 
+                    the problem and predict its difficulty level on a scale of <strong>0-100</strong>. 
+                </p>
+                <div class="feature-badges">
+                    <span class="badge"><i class="fas fa-check"></i> Multi-Model Analysis</span>
+                    <span class="badge"><i class="fas fa-check"></i> Real-time Prediction</span>
+                    <span class="badge"><i class="fas fa-check"></i> Probability Distribution</span>
+                </div>
+            </div>
+
+            <!-- Prediction form -->
+            <form id="predictionForm" class="prediction-form">
+                
+                <!-- Problem Title Input -->
+                <div class="form-group">
+                    <label for="title">
+                        <i class="fas fa-heading"></i> Problem Title
+                        <span class="optional">(Optional)</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="title" 
+                        name="title" 
+                        placeholder="e.g., Two Sum Problem"
+                        class="form-control"
+                    >
+                    <small class="form-help">A concise title for the problem</small>
+                </div>
+
+                <!-- Problem Description Input (Required) -->
+                <div class="form-group">
+                    <label for="description">
+                        <i class="fas fa-align-left"></i> Problem Description
+                        <span class="required">*</span>
+                    </label>
+                    <textarea 
+                        id="description" 
+                        name="description" 
+                        rows="6" 
+                        placeholder="Describe the problem in detail.  Include constraints, objectives, and any specific requirements..."
+                        class="form-control"
+                        required
+                    ></textarea>
+                    <small class="form-help">Detailed problem statement (required)</small>
+                </div>
+
+                <!-- Input Description -->
+                <div class="form-group">
+                    <label for="input_description">
+                        <i class="fas fa-download"></i> Input Description
+                        <span class="optional">(Optional)</span>
+                    </label>
+                    <textarea 
+                        id="input_description" 
+                        name="input_description" 
+                        rows="3" 
+                        placeholder="Describe the input format, data types, and constraints..."
+                        class="form-control"
+                    ></textarea>
+                    <small class="form-help">Format and structure of input data</small>
+                </div>
+
+                <!-- Output Description -->
+                <div class="form-group">
+                    <label for="output_description">
+                        <i class="fas fa-upload"></i> Output Description
+                        <span class="optional">(Optional)</span>
+                    </label>
+                    <textarea 
+                        id="output_description" 
+                        name="output_description" 
+                        rows="3" 
+                        placeholder="Describe the expected output format and structure..."
+                        class="form-control"
+                    ></textarea>
+                    <small class="form-help">Expected output format and structure</small>
+                </div>
+
+                <!-- Submit and Clear buttons -->
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary" id="predictBtn">
+                        <i class="fas fa-magic"></i> Predict Difficulty
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="clearBtn">
+                        <i class="fas fa-eraser"></i> Clear Form
+                    </button>
+                </div>
+            </form>
+
+            <!-- Loading spinner (hidden by default) -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing problem with AI models...</p>
+            </div>
+
+            <!-- Error message container (hidden by default) -->
+            <div class="alert alert-error" id="errorAlert" style="display: none;">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorMessage"></span>
+            </div>
+
+            <!-- Results container (hidden by default) -->
+            <div class="results-container" id="resultsContainer" style="display: none;">
+                
+                <!-- Main difficulty score display -->
+                <div class="result-card main-result">
+                    <h2><i class="fas fa-chart-line"></i> Prediction Results</h2>
+                    
+                    <!-- Difficulty Score (0-100) -->
+                    <div class="score-display">
+                        <div class="score-circle" id="scoreCircle">
+                            <div class="score-value" id="scoreValue">--</div>
+                            <div class="score-label">/ 100</div>
+                        </div>
+                        <div class="score-info">
+                            <h3 id="difficultyClass">--</h3>
+                            <p id="difficultyInterpretation">--</p>
+                        </div>
+                    </div>
+
+                    <!-- Visual difficulty bar -->
+                    <div class="difficulty-bar">
+                        <div class="difficulty-bar-fill" id="difficultyBarFill"></div>
+                    </div>
+                    <div class="difficulty-scale">
+                        <span>0 (Easy)</span>
+                        <span>50 (Medium)</span>
+                        <span>100 (Hard)</span>
+                    </div>
+                </div>
+
+                <!-- Probability distribution card -->
+                <div class="result-card probability-card">
+                    <h3><i class="fas fa-percentage"></i> Probability Distribution</h3>
+                    <div id="probabilityBars">
+                        <!-- Probability bars will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- Model information card -->
+                <div class="result-card info-result">
+                    <h3><i class="fas fa-info-circle"></i> About This Prediction</h3>
+                    <ul class="info-list">
+                        <li><i class="fas fa-robot"></i> <strong>Models Used:</strong> LightGBM, XGBoost, Random Forest, SVM</li>
+                        <li><i class="fas fa-scale-balanced"></i> <strong>Scale: </strong> 0-100 (Enhanced from 0-10)</li>
+                        <li><i class="fas fa-brain"></i> <strong>Features Analyzed:</strong> Text length, keywords, mathematical notation, TF-IDF</li>
+                        <li><i class="fas fa-clock"></i> <strong>Processing Time:</strong> <span id="processingTime">--</span></li>
+                    </ul>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer section -->
+        <footer class="footer">
+            <p>&copy; 2024 AutoJudge Project | Developed by <a href="https://github.com/vishnubishnoi17" target="_blank">Vishnu Bishnoi</a></p>
+            <p>
+                <a href="/health" target="_blank"><i class="fas fa-heartbeat"></i> System Health</a> | 
+                <a href="/about" target="_blank"><i class="fas fa-info"></i> API Info</a> | 
+                <a href="https://github.com/vishnubishnoi17/AutoJudge-Project" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+            </p>
+        </footer>
+
     </div>
 
-    <footer class="text-center py-4 text-muted small">
-        <p>&copy;  AutoJudge Project ~ VISHNU BISHNOI</p>
-    </footer>
-
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom Logic -->
-    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    <!-- Custom JavaScript file -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
