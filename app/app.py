@@ -28,7 +28,7 @@ predictor = None
 # Load predictor at startup
 try:
     print("Loading AutoJudge prediction models...")
-    predictor = load_predictor('../models')  # Adjust path relative to app directory
+    predictor = load_predictor('models')  # Adjust path relative to app directory
     print("✓ Models loaded successfully!")
 except Exception as e:
     print(f"✗ Error loading models: {e}")

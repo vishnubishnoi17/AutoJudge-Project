@@ -341,7 +341,7 @@ class DifficultyRegressor:
         output_path.mkdir(parents=True, exist_ok=True)
         
         # Save the best model
-        model_path = output_path / 'regressor. pkl'
+        model_path = output_path / 'regressor.pkl'
         joblib.dump(self.best_model, model_path)
         print(f"✓ Best regressor saved to {model_path}")
         

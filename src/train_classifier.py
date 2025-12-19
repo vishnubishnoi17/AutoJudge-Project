@@ -265,7 +265,7 @@ class DifficultyClassifier:
         output_path.mkdir(parents=True, exist_ok=True)
         
         # Save the best model
-        model_path = output_path / 'classifier. pkl'
+        model_path = output_path / 'classifier.pkl'
         joblib.dump(self.best_model, model_path)
         print(f"✓ Best classifier saved to {model_path}")
         
