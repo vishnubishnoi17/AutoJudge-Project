@@ -1,385 +1,321 @@
-# 🎯 AutoJudge:  Programming Problem Difficulty Predictor
+# AutoJudge - Programming Problem Difficulty Predictor
 
-An intelligent machine learning system that automatically predicts programming problem difficulty based on textual descriptions. Uses both classification (Easy/Medium/Hard) and regression (numeric score) approaches with an interactive web interface.
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Version](https://img.shields.io/badge/Version-2.0.0-orange)
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-3.0.0-green. svg)](https://flask.palletsprojects.com/)
-[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3.2-orange.svg)](https://scikit-learn.org/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+## 🎯 Overview
 
-## 🌟 Features
+**AutoJudge** is an intelligent system that predicts the difficulty level of programming problems using advanced machine learning techniques. The system provides both classification (Easy/Medium/Hard) and regression (0-100 score) predictions.
 
-- **🎲 Classification Model**: Predicts problem difficulty class (Easy/Medium/Hard) with probability distribution
-- **📊 Regression Model**: Predicts numerical difficulty score (0-10 scale)
-- **🌐 Web Interface**: Beautiful, responsive UI for real-time predictions
-- **🌓 Dark Mode**: Toggle between light and dark themes with persistent storage
-- **🤖 Machine Learning**: Multiple models (Random Forest, Logistic Regression, SVM, Gradient Boosting)
-- **📈 Feature Engineering**: 540+ features including TF-IDF, keyword analysis, and text statistics
+### ✨ Version 2.0 Features
 
-## 🚀 Live Demo
+- 🎚️ **Enhanced Scale**: Difficulty scores now range from 0-100 (upgraded from 0-10)
+- 🚀 **Advanced Models**: Added LightGBM and XGBoost for improved accuracy
+- 📝 **Better Documentation**: Comprehensive code comments for readability
+- 🎯 **Improved Accuracy**: Multiple model architectures for best performance
 
-> **📸 Add your screenshots here after running the app!**
+---
 
-### Light Mode Interface
-![AutoJudge Light Mode](https://via.placeholder.com/800x400/667eea/ffffff?text=Add+Light+Mode+Screenshot)
-*Replace with:  Screenshot of the main interface in light mode*
-
-### Dark Mode Interface
-![AutoJudge Dark Mode](https://via.placeholder.com/800x400/1a202c/ffffff?text=Add+Dark+Mode+Screenshot)
-*Replace with: Screenshot of the main interface in dark mode*
-
-### Prediction Results
-![Prediction Results](https://via.placeholder.com/800x300/48bb78/ffffff?text=Add+Prediction+Results+Screenshot)
-*Replace with: Screenshot showing a successful prediction with probability bars*
-
-## 📁 Project Structure
+## 🏗️ Project Structure
 
 ```
 AutoJudge-Project/
 ├── data/
-│   ├── problems_data.jsonl           # Raw dataset (JSONL format)
-│   └── processed_data.csv            # Preprocessed dataset
-│
+│   ├── problems_data.jsonl       # Raw problem data
+│   └── processed_data.csv        # Preprocessed data
 ├── models/
-│   ├── classifier_random_forest.pkl  # Trained classification model
-│   ├── regressor_random_forest. pkl   # Trained regression model
+│   ├── classifier.pkl            # Trained classification model
+│   ├── regressor.pkl             # Trained regression model
 │   ├── feature_extractor_classifier.pkl
-│   └── feature_extractor_regressor.pkl
-│
+│   ├── feature_extractor_regressor.pkl
+│   └── *. png                     # Performance visualization plots
 ├── src/
-│   ├── __init__.py
-│   ├── data_preprocessing.py         # Data cleaning & preparation
-│   ├── feature_engineering.py        # Feature extraction (540+ features)
-│   ├── train_classifier.py           # Classification model training
-│   ├── train_regressor.py            # Regression model training
-│   └── predict.py                    # Prediction utilities
-│
+│   ├── __init__.py               # Package initialization
+│   ├── data_preprocessing.py    # Data loading and preprocessing
+│   ├── feature_engineering.py   # Feature extraction
+│   ├── train_classifier.py      # Classification model training
+│   ├── train_regressor.py       # Regression model training
+│   └── predict.py                # Prediction utilities
 ├── app/
-│   ├── app. py                        # Flask web application
+│   ├── app.py                    # Flask web application
 │   ├── templates/
-│   │   └── index.html                # Web interface
+│   │   └── index.html           # Web interface
 │   └── static/
-│       ├── style.css                 # Styling with dark mode support
-│       └── main.js                   # Frontend JavaScript logic
-│
-├── requirements.txt                   # Python dependencies
-├── . gitignore
-└── README.md
+│       ├── css/
+│       └── js/
+├── requirements.txt              # Python dependencies
+└── README.md                     # Project documentation
 ```
 
-## 🛠️ Installation
+---
 
-### Prerequisites
-- Python 3.8 or higher
-- pip package manager
-- Git
+## 🚀 Installation
 
-### Setup Instructions
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/vishnubishnoi17/AutoJudge-Project.git
-   cd AutoJudge-Project
-   ```
-
-2. **Create a virtual environment:**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. **Install dependencies:**
-   ```bash
-   pip install -r requirements. txt
-   ```
-
-4. **Verify installation:**
-   ```bash
-   python --version  # Should be 3.8+
-   pip list          # Check all packages installed
-   ```
-
-## 📖 Usage
-
-### Option 1: Use Pre-trained Models (Quickstart)
-
-If models are already trained, just run the web app: 
+### 1. Clone the Repository
 
 ```bash
-python app/app.py
+git clone https://github.com/vishnubishnoi17/AutoJudge-Project.git
+cd AutoJudge-Project
 ```
 
-Then open your browser and navigate to:  **http://localhost:5000**
+### 2. Create Virtual Environment (Recommended)
 
-### Option 2: Train Models from Scratch
-
-#### Step 1: Preprocess Data
 ```bash
-python src/data_preprocessing.py
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
-**Output:** Creates `data/processed_data.csv` with cleaned text and combined features. 
 
-#### Step 2: Train Classification Model
+### 3. Install Dependencies
+
 ```bash
-python src/train_classifier.py
+pip install -r requirements.txt
 ```
-**Output:** 
-- `models/classifier_random_forest. pkl`
-- `models/feature_extractor_classifier.pkl`
-- Training accuracy and classification report
 
-#### Step 3: Train Regression Model
+---
+
+## 📊 Usage
+
+### Step 1: Data Preprocessing
+
+Preprocess the raw data and scale scores from 0-10 to 0-100:
+
 ```bash
-python src/train_regressor.py
+cd src
+python data_preprocessing.py
 ```
-**Output:**
-- `models/regressor_random_forest.pkl`
-- `models/feature_extractor_regressor. pkl`
-- MAE, RMSE, and R² scores
 
-#### Step 4: Test Predictions
+**Output**:  `data/processed_data.csv`
+
+### Step 2: Train Classification Model
+
+Train multiple classifiers including LightGBM and XGBoost:
+
 ```bash
-python src/predict.py
+python train_classifier.py
 ```
-**Output:** Test prediction on "Two Sum" problem example.
 
-#### Step 5: Launch Web App
+**Models Trained**:
+- Logistic Regression
+- Random Forest
+- SVM
+- LightGBM ✨
+- XGBoost ✨
+
+**Output**: Best model saved to `models/classifier.pkl`
+
+### Step 3: Train Regression Model
+
+Train multiple regressors for score prediction (0-100):
+
 ```bash
-python app/app.py
+python train_regressor.py
 ```
 
-## 📊 Model Performance
+**Models Trained**:
+- Linear Regression
+- Random Forest
+- Gradient Boosting
+- LightGBM ✨
+- XGBoost ✨
 
-### Classification Model (Random Forest)
-- **Accuracy**: 54-60% (3-class problem)
-- **Best Model**: Random Forest Classifier
-- **Features**:  540 combined features
-- **Classes**: Easy (54%), Medium (24%), Hard (22%)
+**Output**: Best model saved to `models/regressor.pkl`
 
-### Regression Model (Random Forest)
-- **MAE**: ~1.2 (Mean Absolute Error)
-- **RMSE**: ~1.5 (Root Mean Squared Error)
-- **R² Score**: ~0.65
-- **Score Range**: 0-10
+### Step 4: Make Predictions
 
-### Models Tested
-| Model | Type | Performance |
-|-------|------|-------------|
-| Random Forest | Classification | ⭐ Best Accuracy |
-| Logistic Regression | Classification | Good baseline |
-| SVM | Classification | Moderate |
-| Random Forest | Regression | ⭐ Best MAE |
-| Gradient Boosting | Regression | Close second |
-| Linear Regression | Regression | Baseline |
+#### Option A: Command Line
 
-## 🧠 Features Engineered
+```bash
+python predict.py
+```
 
-### 1. **Text Length Features** (7 features)
-- Character count
-- Word count
-- Average word length
-- Sentence count
-- Description length
-- Input description length
-- Output description length
+#### Option B: Python API
 
-### 2. **Mathematical Features** (4 features)
-- Math operators count (+, -, *, /, =, <, >)
-- Parentheses/brackets count
-- Number count
-- Formula presence
+```python
+from predict import load_predictor
 
-### 3. **Keyword Features** (29 features)
-Algorithm keywords detected:
-- `graph`, `tree`, `dynamic`, `dp`, `recursion`, `backtrack`
-- `greedy`, `sort`, `search`, `binary`, `array`, `string`
-- `matrix`, `linked`, `list`, `stack`, `queue`, `hash`
-- `dfs`, `bfs`, `dijkstra`, `shortest`, `path`, `optimize`
-- `maximum`, `minimum`, `subsequence`, `substring`
+# Load predictor
+predictor = load_predictor('models')
 
-### 4. **TF-IDF Features** (500 features)
-- Bi-gram text vectorization
-- Semantic understanding of problem descriptions
-- Captures unique terminology
+# Make prediction
+results = predictor.predict(
+    title="Two Sum Problem",
+    description="Given an array of integers and a target, find two numbers that add up to the target.",
+    input_description="An array of integers and a target integer.",
+    output_description="Indices of the two numbers."
+)
 
-**Total: 540 features**
+print(f"Class: {results['predicted_class']}")
+print(f"Score: {results['predicted_score']}/100")
+print(f"Interpretation: {results['score_interpretation']}")
+```
 
-## 🗂️ Dataset
+#### Option C: Web Application
 
-The dataset (`problems_data.jsonl`) contains programming problems with:
+```bash
+cd app
+python app.py
+```
 
-| Field | Description | Example |
-|-------|-------------|---------|
-| `title` | Problem name | "Two Sum" |
-| `description` | Full problem description | "Given an array of integers..." |
-| `input_description` | Input format | "Array of integers and target" |
-| `output_description` | Expected output | "Two indices" |
-| `problem_class` | Difficulty label | "easy" / "medium" / "hard" |
-| `problem_score` | Numerical difficulty | 3.24 (scale 0-10) |
+Visit:  `http://localhost:5000`
 
-**Format:** JSONL (JSON Lines) - one JSON object per line
+---
 
-## 💻 Technology Stack
+## 🎯 Features
 
-### Backend
-- **Python 3.8+**
-- **Flask 3.0.0** - Web framework
-- **scikit-learn 1.3.2** - Machine learning
-- **pandas 2.1.4** - Data manipulation
-- **numpy 1.26.2** - Numerical computing
-- **joblib 1.3.2** - Model serialization
+### 1. Multi-Model Architecture
 
-### Machine Learning
-- **TfidfVectorizer** - Text vectorization
-- **RandomForestClassifier** - Classification
-- **RandomForestRegressor** - Regression
-- **LogisticRegression, SVM, GradientBoosting** - Alternative models
+The system trains and compares multiple models:
 
-### Frontend
-- **HTML5** - Structure
-- **CSS3** - Styling with dark mode support
-- **JavaScript (ES6+)** - Interactive UI, AJAX requests, dark mode toggle
-- **Responsive Design** - Mobile-friendly
+| Model Type | Classification | Regression |
+|------------|---------------|------------|
+| Linear Models | Logistic Regression | Linear Regression |
+| Tree Ensembles | Random Forest | Random Forest |
+| SVM | RBF Kernel SVM | - |
+| Gradient Boosting | LightGBM, XGBoost | LightGBM, XGBoost, GB |
 
-## 🎨 Web Interface Features
+### 2. Comprehensive Feature Engineering
 
-- ✅ **Real-time predictions** via AJAX
-- ✅ **Dark mode toggle** with localStorage persistence
-- ✅ **Loading animations** during prediction
-- ✅ **Error handling** with user-friendly messages
-- ✅ **Probability visualization** with colored progress bars
-- ✅ **Responsive design** for all screen sizes
-- ✅ **Smooth scrolling** to results
-- ✅ **Form validation** (description required)
-- ✅ **Clear button** to reset form
+- **Text Features**: Character count, word count, sentence count
+- **Mathematical Features**: Operator count, formula detection
+- **Keyword Features**: Algorithm and data structure terms
+- **TF-IDF Features**: Statistical text representation
 
-## 🔧 API Endpoints
+### 3. 0-100 Difficulty Scale
 
-### `GET /`
-Returns the main web interface.
+Scores are automatically scaled and interpreted:
+
+| Score Range | Interpretation |
+|-------------|----------------|
+| 0-20 | Very Easy |
+| 20-40 | Easy |
+| 40-60 | Medium |
+| 60-80 | Hard |
+| 80-100 | Very Hard |
+
+---
+
+## 📈 Model Performance
+
+After training, performance visualizations are automatically generated:
+
+- `models/classifier_comparison.png` - Classification accuracy comparison
+- `models/regressor_comparison.png` - Regression metrics (MAE, R²)
+- `models/prediction_scatter.png` - Predicted vs actual scores
+
+---
+
+## 🌐 Web API Endpoints
 
 ### `POST /predict`
-Accepts JSON with problem description, returns prediction.
 
-**Request:**
+Make a difficulty prediction. 
+
+**Request**:
 ```json
 {
-  "title": "Two Sum",
-  "description": "Given an array of integers.. .",
-  "input_description":  "Array of integers and target",
-  "output_description": "Two indices"
+    "title": "Problem Title",
+    "description": "Problem description.. .",
+    "input_description":  "Input format.. .",
+    "output_description":  "Output format..."
 }
 ```
 
-**Response:**
+**Response**:
 ```json
 {
-  "success": true,
-  "predicted_class": "easy",
-  "predicted_score": 3.24,
-  "probabilities": {
-    "Easy":  0.54,
-    "Medium": 0.24,
-    "Hard": 0.22
-  }
+    "success": true,
+    "predicted_class":  "Medium",
+    "predicted_score": 55.23,
+    "score_interpretation": "Medium",
+    "probabilities": {
+        "Easy": 0.15,
+        "Medium": 0.70,
+        "Hard": 0.15
+    }
 }
 ```
 
 ### `GET /health`
-Health check endpoint.
 
-**Response:**
-```json
-{
-  "status": "healthy",
-  "models_loaded": true
-}
-```
+Check application health status.
 
-## 🧪 Testing
+### `GET /about`
 
-### Test Prediction Module
-```bash
-python src/predict.py
-```
-
-### Test with cURL
-```bash
-curl -X POST http://localhost:5000/predict \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Two Sum",
-    "description": "Given an array of integers, return indices of two numbers that add up to target",
-    "input_description": "Array and target integer",
-    "output_description":  "Two indices"
-  }'
-```
-
-## 🐛 Troubleshooting
-
-### Models not loading
-```bash
-# Check if model files exist
-ls -la models/*. pkl
-
-# Should show 4 files:
-# - classifier_random_forest.pkl
-# - regressor_random_forest.pkl
-# - feature_extractor_classifier.pkl
-# - feature_extractor_regressor.pkl
-```
-
-### Port 5000 already in use
-```bash
-# Find process on port 5000
-lsof -i :5000
-
-# Kill the process
-kill -9 <PID>
-```
-
-### Virtual environment issues
-```bash
-# Recreate virtual environment
-rm -rf venv
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-## 📈 Future Enhancements
-
-- [ ] Add more algorithms (Neural Networks, XGBoost)
-- [ ] Implement user authentication
-- [ ] Store prediction history in database
-- [ ] Add batch prediction upload (CSV)
-- [ ] Deploy to cloud (Heroku/AWS/GCP)
-- [ ] Add model retraining API
-- [ ] Implement A/B testing for models
-- [ ] Add explainability (SHAP values)
-- [ ] Export predictions to PDF/Excel
-
-## 👥 Contributors
-
-- **[vishnubishnoi17](https://github.com/vishnubishnoi17)** - Project Lead & Developer
-
-## 📄 License
-
-This project is for educational purposes.
-
-## 🙏 Acknowledgments
-
-- Dataset inspired by competitive programming platforms
-- Built with guidance from machine learning best practices
-- UI design inspired by modern web applications
-
-## 📞 Contact
-
-- **GitHub**: [@vishnubishnoi17](https://github.com/vishnubishnoi17)
-- **Repository**: [AutoJudge-Project](https://github.com/vishnubishnoi17/AutoJudge-Project)
+Get information about models and features.
 
 ---
 
-**⭐ Star this repository if you find it helpful!**
+## 🛠️ Technologies Used
 
-Built with ❤️ for automatic programming problem difficulty assessment
+- **Python 3.8+**
+- **Machine Learning**: scikit-learn, LightGBM, XGBoost
+- **Data Processing**: pandas, numpy
+- **Web Framework**:  Flask
+- **Visualization**: matplotlib, seaborn
+- **Serialization**: joblib
+
+---
+
+## 📝 Code Quality
+
+### Version 2.0 Improvements
+
+✅ **Comprehensive Comments**: Every function and class thoroughly documented  
+✅ **Type Hints**: Better code clarity and IDE support  
+✅ **Error Handling**: Robust error checking and informative messages  
+✅ **Modular Design**: Clean separation of concerns  
+✅ **Logging**: Detailed progress and status messages  
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 👥 Authors
+
+- **Vishnu Bishnoi** - [@vishnubishnoi17](https://github.com/vishnubishnoi17)
+
+---
+
+## 🙏 Acknowledgments
+
+- Programming problem datasets
+- Open-source ML community
+- Contributors and testers
+
+---
+
+## 📞 Contact
+
+For questions or suggestions, please open an issue or contact: 
+- GitHub: [@vishnubishnoi17](https://github.com/vishnubishnoi17)
+
+---
+
+## 🔮 Future Enhancements
+
+- [ ] Deep learning models (BERT, transformers)
+- [ ] Multi-language support
+- [ ] Real-time difficulty adjustment
+- [ ] Integration with online judges
+- [ ] User feedback loop for model improvement
+
+---
+
+**⭐ If you find this project helpful, please star the repository! **
