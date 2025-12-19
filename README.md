@@ -1,9 +1,9 @@
 # 🎯 AutoJudge:  Programming Problem Difficulty Predictor
 
-An intelligent machine learning system that automatically predicts programming problem difficulty based on textual descriptions.  Uses both classification (Easy/Medium/Hard) and regression (numerical score) models.
+An intelligent machine learning system that automatically predicts programming problem difficulty based on textual descriptions. Uses both classification (Easy/Medium/Hard) and regression (numeric score) approaches with an interactive web interface.
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-3.0.0-green.svg)](https://flask.palletsprojects.com/)
+[![Flask](https://img.shields.io/badge/Flask-3.0.0-green. svg)](https://flask.palletsprojects.com/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3.2-orange.svg)](https://scikit-learn.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -12,12 +12,25 @@ An intelligent machine learning system that automatically predicts programming p
 - **🎲 Classification Model**: Predicts problem difficulty class (Easy/Medium/Hard) with probability distribution
 - **📊 Regression Model**: Predicts numerical difficulty score (0-10 scale)
 - **🌐 Web Interface**: Beautiful, responsive UI for real-time predictions
+- **🌓 Dark Mode**: Toggle between light and dark themes with persistent storage
 - **🤖 Machine Learning**: Multiple models (Random Forest, Logistic Regression, SVM, Gradient Boosting)
 - **📈 Feature Engineering**: 540+ features including TF-IDF, keyword analysis, and text statistics
 
 ## 🚀 Live Demo
 
-![AutoJudge Demo](https://via.placeholder.com/800x400/667eea/ffffff?text=AutoJudge+Web+Interface)
+> **📸 Add your screenshots here after running the app!**
+
+### Light Mode Interface
+![AutoJudge Light Mode](https://via.placeholder.com/800x400/667eea/ffffff?text=Add+Light+Mode+Screenshot)
+*Replace with:  Screenshot of the main interface in light mode*
+
+### Dark Mode Interface
+![AutoJudge Dark Mode](https://via.placeholder.com/800x400/1a202c/ffffff?text=Add+Dark+Mode+Screenshot)
+*Replace with: Screenshot of the main interface in dark mode*
+
+### Prediction Results
+![Prediction Results](https://via.placeholder.com/800x300/48bb78/ffffff?text=Add+Prediction+Results+Screenshot)
+*Replace with: Screenshot showing a successful prediction with probability bars*
 
 ## 📁 Project Structure
 
@@ -29,7 +42,7 @@ AutoJudge-Project/
 │
 ├── models/
 │   ├── classifier_random_forest.pkl  # Trained classification model
-│   ├── regressor_random_forest.pkl   # Trained regression model
+│   ├── regressor_random_forest. pkl   # Trained regression model
 │   ├── feature_extractor_classifier.pkl
 │   └── feature_extractor_regressor.pkl
 │
@@ -42,11 +55,12 @@ AutoJudge-Project/
 │   └── predict.py                    # Prediction utilities
 │
 ├── app/
-│   ├── app.py                        # Flask web application
+│   ├── app. py                        # Flask web application
 │   ├── templates/
 │   │   └── index.html                # Web interface
 │   └── static/
-│       └── style.css                 # Styling (272 lines)
+│       ├── style.css                 # Styling with dark mode support
+│       └── main.js                   # Frontend JavaScript logic
 │
 ├── requirements.txt                   # Python dependencies
 ├── . gitignore
@@ -120,7 +134,7 @@ python src/train_regressor.py
 ```
 **Output:**
 - `models/regressor_random_forest.pkl`
-- `models/feature_extractor_regressor.pkl`
+- `models/feature_extractor_regressor. pkl`
 - MAE, RMSE, and R² scores
 
 #### Step 4: Test Predictions
@@ -139,7 +153,7 @@ python app/app.py
 ### Classification Model (Random Forest)
 - **Accuracy**: 54-60% (3-class problem)
 - **Best Model**: Random Forest Classifier
-- **Features**: 540 combined features
+- **Features**:  540 combined features
 - **Classes**: Easy (54%), Medium (24%), Hard (22%)
 
 ### Regression Model (Random Forest)
@@ -188,11 +202,11 @@ Algorithm keywords detected:
 - Semantic understanding of problem descriptions
 - Captures unique terminology
 
-**Total:  540 features**
+**Total: 540 features**
 
 ## 🗂️ Dataset
 
-The dataset (`problems_data.jsonl`) contains programming problems with: 
+The dataset (`problems_data.jsonl`) contains programming problems with:
 
 | Field | Description | Example |
 |-------|-------------|---------|
@@ -223,13 +237,14 @@ The dataset (`problems_data.jsonl`) contains programming problems with:
 
 ### Frontend
 - **HTML5** - Structure
-- **CSS3** - Styling (272 lines, gradient design)
-- **Vanilla JavaScript** - AJAX requests
+- **CSS3** - Styling with dark mode support
+- **JavaScript (ES6+)** - Interactive UI, AJAX requests, dark mode toggle
 - **Responsive Design** - Mobile-friendly
 
 ## 🎨 Web Interface Features
 
 - ✅ **Real-time predictions** via AJAX
+- ✅ **Dark mode toggle** with localStorage persistence
 - ✅ **Loading animations** during prediction
 - ✅ **Error handling** with user-friendly messages
 - ✅ **Probability visualization** with colored progress bars
@@ -263,9 +278,9 @@ Accepts JSON with problem description, returns prediction.
   "predicted_class": "easy",
   "predicted_score": 3.24,
   "probabilities": {
-    "Easy": 0.54,
+    "Easy":  0.54,
     "Medium": 0.24,
-    "Hard":  0.22
+    "Hard": 0.22
   }
 }
 ```
@@ -295,7 +310,7 @@ curl -X POST http://localhost:5000/predict \
   -d '{
     "title": "Two Sum",
     "description": "Given an array of integers, return indices of two numbers that add up to target",
-    "input_description":  "Array and target integer",
+    "input_description": "Array and target integer",
     "output_description":  "Two indices"
   }'
 ```
@@ -307,7 +322,7 @@ curl -X POST http://localhost:5000/predict \
 # Check if model files exist
 ls -la models/*. pkl
 
-# Should show 4 files: 
+# Should show 4 files:
 # - classifier_random_forest.pkl
 # - regressor_random_forest.pkl
 # - feature_extractor_classifier.pkl
@@ -342,6 +357,7 @@ pip install -r requirements.txt
 - [ ] Add model retraining API
 - [ ] Implement A/B testing for models
 - [ ] Add explainability (SHAP values)
+- [ ] Export predictions to PDF/Excel
 
 ## 👥 Contributors
 
@@ -349,7 +365,7 @@ pip install -r requirements.txt
 
 ## 📄 License
 
-This project is for educational purposes. 
+This project is for educational purposes.
 
 ## 🙏 Acknowledgments
 
